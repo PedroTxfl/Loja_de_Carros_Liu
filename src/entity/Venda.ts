@@ -5,10 +5,10 @@ import { Usuario } from "./Usuario";
 
 @Entity()
 export class Venda {
-    @PrimaryGeneratedColumn("uuid") 
+    @PrimaryGeneratedColumn() 
     id?: string;
 
-    @Column('timestamp') 
+    @Column('timestamp', { default: () => "CURRENT_TIMESTAMP" })
     dataHora?: Date;
 
     @ManyToOne(() => Cliente, (cliente) => cliente.vendas)
