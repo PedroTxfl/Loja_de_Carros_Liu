@@ -1,10 +1,10 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Venda } from "./Venda"; // Supondo que Venda.ts existirá
+import { Venda } from "./Venda"; 
 
 @Entity()
 export class Veiculo {
     @PrimaryGeneratedColumn()
-    id?: number; //
+    id?: number; 
 
     @Column()
     marca?: string;
@@ -21,7 +21,7 @@ export class Veiculo {
     @Column()
     cor?: string;
 
-    @Column({ unique: true, nullable: true }) // Placa pode ser nula para carros 0km e deve ser única
+    @Column({ unique: true, nullable: true }) 
     placa?: string;
 
     @Column("int", { default: 0 })
@@ -35,8 +35,6 @@ export class Veiculo {
 
     @Column({ default: false }) 
     vendido?: boolean;
-
-    // Relação com Venda: Um veículo pode estar associado a múltiplas propostas/histórico de vendas, mas apenas uma venda finalizada por vez.
 
     @OneToMany(() => Venda, (venda) => venda.veiculo)
     vendas?: Venda[];

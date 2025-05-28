@@ -8,7 +8,7 @@ export class Venda {
     @PrimaryGeneratedColumn("uuid") 
     id?: string;
 
-    @Column('timestamp', { default: () => "CURRENT_TIMESTAMP" }) 
+    @Column('timestamp') 
     dataHora?: Date;
 
     @ManyToOne(() => Cliente, (cliente) => cliente.vendas)
@@ -18,7 +18,7 @@ export class Venda {
     veiculo?: Veiculo;
 
     @ManyToOne(() => Usuario, (usuario) => usuario.vendasEfetuadas)
-    vendedor?: Usuario; //O usuário (vendedor) que realizou a venda
+    vendedor?: Usuario; 
 
     @Column("decimal", { precision: 10, scale: 2 })
     valorVenda?: number;
