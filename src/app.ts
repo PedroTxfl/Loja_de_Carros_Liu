@@ -3,9 +3,13 @@ import veiculoRouter from './controller/VeiculoController';
 import clienteRouter from './controller/ClienteController';
 import usuarioRouter from './controller/UsuarioController';
 import vendaRouter from './controller/VendaController';
+import * as cors from 'cors';
+
 
 const app = express();
 
+
+app.use(cors());
 app.use(express.json()); 
 
 
