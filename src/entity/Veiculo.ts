@@ -36,6 +36,9 @@ export class Veiculo {
     @Column({ default: false }) 
     vendido?: boolean;
 
+    @Column({ nullable: true })
+    imagemUrl?: string;
+
     @OneToMany(() => Venda, (venda) => venda.veiculo)
     vendas?: Venda[];
 }

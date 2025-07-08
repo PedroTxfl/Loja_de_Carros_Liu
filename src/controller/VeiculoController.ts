@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { VeiculoService, VeiculoData, UpdateVeiculoData } from '../services/VeiculoService';
+import { upload } from '../config/multer';
 
 const veiculoRouter = Router();
 const veiculoService = new VeiculoService();
@@ -84,5 +85,22 @@ veiculoRouter.delete('/:id', async (req: Request, res: Response) => {
     res.status(statusCode).json({ error: errorMessage });
   }
 });
+
+veiculoRouter.post('/:id/imagem', upload.single('imagem'), async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        if (!req.file) {
+            res.status(400).json({ error: 'Nenhum ficheiro foi enviado.' });
+            return;
+        }
+        const veiculoAtualizado = await veiculoService.atualizarImagem(parseInt(id), req.file.filename);
+        res.status(200).json(veiculoAtualizado);
+    } catch (err: any) {
+        const statusCode = err.id || 500;
+        const errorMessage = err.msg || 'Erro ao fazer upload da imagem.';
+        res.status(statusCode).json({ error: errorMessage });
+    }
+});
+
 
 export default veiculoRouter; 

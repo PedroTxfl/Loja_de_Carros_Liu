@@ -115,4 +115,10 @@ export class VeiculoService {
     await this.veiculoRepository.remove(veiculoParaDeletar);
     return veiculoParaDeletar; 
   }
+
+  async atualizarImagem(id: number, imagemUrl: string): Promise<Veiculo> {
+        const veiculo = await this.buscarPorId(id);
+        veiculo.imagemUrl = imagemUrl;
+        return await this.veiculoRepository.save(veiculo);
+    }
 }
