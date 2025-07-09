@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { VendasList } from '../components/VendaList';
 import { VendaForm } from '../components/VendaForm';
 
+
 export function GerenciarVendas() {
     const [refreshKey, setRefreshKey] = useState(0);
 

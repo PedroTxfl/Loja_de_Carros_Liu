@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { VeiculoEditForm } from './VeiculoEditForm'; 
+import { VeiculoEditForm } from './VeiculoEditForm';
 
 interface Veiculo {
     id: number;
@@ -20,49 +20,41 @@ interface VeiculosListProps {
 
 export function VeiculosList({ refreshKey, onSuccess }: VeiculosListProps) {
     const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
     const [editingVeiculoId, setEditingVeiculoId] = useState<number | null>(null);
 
     useEffect(() => {
-        setLoading(true);
         axios.get('http://localhost:3000/api/veiculos')
             .then(response => {
                 setVeiculos(response.data);
-                setLoading(false);
             })
             .catch(err => {
-                setError('Falha ao carregar os veículos.');
-                setLoading(false);
-                console.error(err);
+                console.error("Falha ao carregar os veículos.", err);
+                alert("Não foi possível carregar a lista de veículos.");
             });
     }, [refreshKey]);
 
-    const handleDelete = async (id: number) => {
+    const handleDelete = (id: number) => {
         if (window.confirm('Tem certeza que deseja deletar este veículo?')) {
-            try {
-                await axios.delete(`http://localhost:3000/api/veiculos/${id}`);
-                alert('Veículo deletado com sucesso!');
-                onSuccess();
-            } catch (err) {
-                alert('Falha ao deletar o veículo.');
-                console.error(err);
-            }
+            axios.delete(`http://localhost:3000/api/veiculos/${id}`)
+                .then(() => {
+                    alert('Veículo deletado com sucesso!');
+                    onSuccess();
+                })
+                .catch(err => {
+                    console.error("Erro ao deletar veículo:", err);
+                    alert('Falha ao deletar o veículo.');
+                });
         }
     };
 
     const handleEditSuccess = () => {
-        setEditingVeiculoId(null); 
-        onSuccess(); 
+        setEditingVeiculoId(null);
+        onSuccess();
     };
 
     const handleCancelEdit = () => {
-        setEditingVeiculoId(null); 
+        setEditingVeiculoId(null);
     };
-
-    if (loading) return <p>Carregando veículos...</p>;
-    if (error) return <p>{error}</p>;
 
     return (
         <div>
@@ -71,10 +63,10 @@ export function VeiculosList({ refreshKey, onSuccess }: VeiculosListProps) {
                 {veiculos.map(veiculo => (
                     <li key={veiculo.id} style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>
                         {editingVeiculoId === veiculo.id ? (
-                            <VeiculoEditForm 
-                                veiculo={veiculo} 
-                                onSuccess={handleEditSuccess} 
-                                onCancel={handleCancelEdit} 
+                            <VeiculoEditForm
+                                veiculo={veiculo}
+                                onSuccess={handleEditSuccess}
+                                onCancel={handleCancelEdit}
                             />
                         ) : (
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

@@ -1,6 +1,8 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
+// Interfaces para os dados
 interface Cliente { id: number; nome: string; }
 interface Veiculo { id: number; marca: string; modelo: string; vendido: boolean; }
 interface Usuario { id: number; nome: string; }
@@ -10,24 +12,27 @@ interface VendaFormProps {
 }
 
 export function VendaForm({ onSuccess }: VendaFormProps) {
+    const { id: veiculoIdFromUrl } = useParams();
+
+    // Estados para carregar os dados dos selects
     const [clientes, setClientes] = useState<Cliente[]>([]);
     const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
 
+    // Estados para os dados do formulário
     const [clienteId, setClienteId] = useState('');
-    const [veiculoId, setVeiculoId] = useState('');
     const [vendedorId, setVendedorId] = useState('');
     const [valorVenda, setValorVenda] = useState(0);
+    const [veiculoId, setVeiculoId] = useState(veiculoIdFromUrl || '');
 
-    const [error, setError] = useState<string | null>(null);
-
+    // Efeitos para buscar os dados das outras entidades
     useEffect(() => {
         axios.get('http://localhost:3000/api/clientes').then(res => setClientes(res.data));
     }, []);
 
     useEffect(() => {
         axios.get('http://localhost:3000/api/veiculos').then(res => {
-
+            // Filtra para mostrar apenas veículos que não foram vendidos
             setVeiculos(res.data.filter((v: Veiculo) => !v.vendido));
         });
     }, []);
@@ -36,12 +41,12 @@ export function VendaForm({ onSuccess }: VendaFormProps) {
         axios.get('http://localhost:3000/api/usuarios').then(res => setUsuarios(res.data));
     }, []);
 
-    const handleSubmit = async (event: FormEvent) => {
+    const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
-        setError(null);
 
+        // Validação manual antes de enviar a requisição
         if (!clienteId || !veiculoId || !vendedorId || valorVenda <= 0) {
-            setError('Todos os campos são obrigatórios e o valor da venda deve ser positivo.');
+            alert('Todos os campos são obrigatórios e o valor da venda deve ser positivo.');
             return;
         }
 
@@ -52,19 +57,21 @@ export function VendaForm({ onSuccess }: VendaFormProps) {
             valorVenda: valorVenda
         };
 
-        try {
-            await axios.post('http://localhost:3000/api/vendas', vendaData);
-            alert('Venda registrada com sucesso!');
-            onSuccess(); 
-        } catch (err: any) {
-            setError(err.response?.data?.error || 'Erro ao registrar venda.');
-        }
+        axios.post('http://localhost:3000/api/vendas', vendaData)
+            .then(() => {
+                alert('Venda registrada com sucesso!');
+                onSuccess(); 
+            })
+            .catch(err => {
+                console.error("Erro ao registrar venda:", err);
+                const errorMessage = err.response?.data?.error || 'Ocorreu uma falha ao registrar a venda.';
+                alert(errorMessage);
+            });
     };
 
     return (
         <form onSubmit={handleSubmit}>
             <h2>Registrar Nova Venda</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <div>
                 <select value={clienteId} onChange={e => setClienteId(e.target.value)} required>
@@ -72,7 +79,7 @@ export function VendaForm({ onSuccess }: VendaFormProps) {
                     {clientes.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
                 </select>
 
-                <select value={veiculoId} onChange={e => setVeiculoId(e.target.value)} required>
+                <select value={veiculoId} onChange={e => setVeiculoId(e.target.value)} required disabled={!!veiculoIdFromUrl}>
                     <option value="">Selecione um Veículo</option>
                     {veiculos.map(v => <option key={v.id} value={v.id}>{v.marca} {v.modelo}</option>)}
                 </select>
