@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 interface Veiculo {
     id: number;
     marca: string;
@@ -5,6 +7,7 @@ interface Veiculo {
     anoFabricacao: number;
     preco: number;
     imagemUrl?: string;
+    vendido: boolean;
 }
 
 interface VeiculoCardProps {
@@ -13,7 +16,7 @@ interface VeiculoCardProps {
 
 const fallbackImageUrl = "https://via.placeholder.com/300x200.png?text=Sem+Imagem";
 
-export function VeiculoCard({ veiculo }: VeiculoCardProps) {
+export function VeiculoCard({ veiculo}: VeiculoCardProps) {
     const imageUrl = veiculo.imagemUrl 
         ? `http://localhost:3000/uploads/${veiculo.imagemUrl}` 
         : fallbackImageUrl;
@@ -40,6 +43,13 @@ export function VeiculoCard({ veiculo }: VeiculoCardProps) {
             <h3>{veiculo.marca} {veiculo.modelo}</h3>
             <p>Ano: {veiculo.anoFabricacao}</p>
             <h4>R$ {veiculo.preco}</h4>
+
+            {!veiculo.vendido && (
+                <Link to={`/vendas/veiculo/${veiculo.id}`}>
+                    <button style={{ marginTop: '10px' }}>Vender</button>
+                </Link>
+            )}
+            {veiculo.vendido && <p style={{ color: 'red', fontWeight: 'bold' }}>VENDIDO</p>}
         </div>
     );
 }

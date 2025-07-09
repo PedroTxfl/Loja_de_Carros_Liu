@@ -2,17 +2,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { VeiculoCard } from '../components/VeiculoCard';
 
-interface Veiculo {
-    id: number;
-    marca: string;
-    modelo: string;
-    anoFabricacao: number;
-    preco: number;
-    imagemUrl?: string;
-}
+
 
 export function GaleriaPage() {
-    const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
+    const [veiculos, setVeiculos] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
