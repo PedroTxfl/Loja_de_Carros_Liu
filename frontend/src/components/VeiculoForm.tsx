@@ -15,10 +15,7 @@ export function VeiculoForm({ onSuccess }: VeiculoFormProps) {
         preco: 0,
         placa: '',
     });
-
     const [imagem, setImagem] = useState<File | null>(null);
-
-    const [error, setError] = useState<string | null>(null);
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -26,35 +23,36 @@ export function VeiculoForm({ onSuccess }: VeiculoFormProps) {
         }
     };
 
-    const handleSubmit = async (event: FormEvent) => {
+    const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
-        setError(null);
 
-        try {
-            const response = await axios.post('http://localhost:3000/api/veiculos', formData);
-            const novoVeiculoId = response.data.id;
+        axios.post('http://localhost:3000/api/veiculos', formData)
+            .then(response => {
+                const novoVeiculoId = response.data.id;
 
-            if (imagem) {
-                const imageFormData = new FormData();
-                imageFormData.append('imagem', imagem);
+                if (imagem) {
+                    const imageFormData = new FormData();
+                    imageFormData.append('imagem', imagem);
 
-                await axios.post(`http://localhost:3000/api/veiculos/${novoVeiculoId}/imagem`, imageFormData);
-            }
+                    return axios.post(`http://localhost:3000/api/veiculos/${novoVeiculoId}/imagem`, imageFormData);
+                }
+            })
+            .then(() => {
+                alert('Veículo registado com sucesso!');
+                onSuccess(); 
+            })
+            .catch(err => {
+                console.error("Erro ao registar veículo:", err);
 
-            alert('Veículo registado com sucesso!');
-            onSuccess(); /
-
-        } catch (err: any) {
-            const errorMessage = err.response?.data?.error || 'Erro ao registar veículo.';
-            setError(errorMessage);
-        }
+                const errorMessage = err.response?.data?.error || 'Ocorreu uma falha ao registar o veículo.';
+                alert(errorMessage);
+            });
     };
 
     return (
         <form onSubmit={handleSubmit}>
             <h2>Registar Novo Veículo</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-
+            
             <div>
                 <input type="text" placeholder="Marca" value={formData.marca} onChange={e => setFormData({ ...formData, marca: e.target.value })} required />
                 <input type="text" placeholder="Modelo" value={formData.modelo} onChange={e => setFormData({ ...formData, modelo: e.target.value })} required />
@@ -70,12 +68,10 @@ export function VeiculoForm({ onSuccess }: VeiculoFormProps) {
              <div>
                 <input type="number" step="0.01" placeholder="Preço" value={formData.preco} onChange={e => setFormData({ ...formData, preco: parseFloat(e.target.value) })} required />
             </div>
-
             <div>
                 <label>Imagem do Veículo:</label>
                 <input type="file" name="imagem" onChange={handleFileChange} />
             </div>
-
             <button type="submit">Registar</button>
         </form>
     );

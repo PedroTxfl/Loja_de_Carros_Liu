@@ -1,7 +1,6 @@
-// client/src/components/UsuariosList.tsx
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { UsuarioEditForm } from './UsuarioEditForm'; // 1. Importar o formulário
+import { UsuarioEditForm } from './UsuarioEditForm';
 
 interface Usuario {
     id: number;
@@ -23,21 +22,23 @@ export function UsuariosList({ refreshKey, onSuccess }: UsuariosListProps) {
         axios.get('http://localhost:3000/api/usuarios').then(res => setUsuarios(res.data));
     }, [refreshKey]);
 
-    const handleDelete = async (id: number) => {
+    const handleDelete = (id: number) => {
         if (window.confirm('Tem a certeza que quer deletar este utilizador?')) {
-            try {
-                await axios.delete(`http://localhost:3000/api/usuarios/${id}`);
-                alert('Utilizador deletado com sucesso!');
-                onSuccess();
-            } catch (err) {
-                alert('Falha ao deletar o utilizador.');
-            }
+            axios.delete(`http://localhost:3000/api/usuarios/${id}`)
+                .then(() => {
+                    alert('Utilizador deletado com sucesso!');
+                    onSuccess();
+                })
+                .catch(err => {
+                    console.error("Erro ao deletar utilizador:", err);
+                    alert('Falha ao deletar o utilizador.');
+                });
         }
     };
 
     const handleEditSuccess = () => {
-        setEditingUserId(null); 
-        onSuccess(); 
+        setEditingUserId(null);
+        onSuccess();
     };
 
     return (
@@ -47,10 +48,10 @@ export function UsuariosList({ refreshKey, onSuccess }: UsuariosListProps) {
                 {usuarios.map(user => (
                     <li key={user.id} style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>
                         {editingUserId === user.id ? (
-                            <UsuarioEditForm 
-                                usuario={user} 
-                                onSuccess={handleEditSuccess} 
-                                onCancel={() => setEditingUserId(null)} 
+                            <UsuarioEditForm
+                                usuario={user}
+                                onSuccess={handleEditSuccess}
+                                onCancel={() => setEditingUserId(null)}
                             />
                         ) : (
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

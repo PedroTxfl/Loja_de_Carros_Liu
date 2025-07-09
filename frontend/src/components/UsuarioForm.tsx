@@ -1,4 +1,3 @@
-// client/src/components/UsuarioForm.tsx
 import { useState, type FormEvent } from 'react';
 import axios from 'axios';
 
@@ -8,24 +7,25 @@ interface UsuarioFormProps {
 
 export function UsuarioForm({ onSuccess }: UsuarioFormProps) {
     const [formData, setFormData] = useState({ nome: '', email: '', senha: '', cargo: '' });
-    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (event: FormEvent) => {
+    const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
-        setError(null);
-        try {
-            await axios.post('http://localhost:3000/api/usuarios', formData);
-            alert('Utilizador registado com sucesso!');
-            onSuccess();
-        } catch (err: any) {
-            setError(err.response?.data?.error || 'Erro ao registar utilizador.');
-        }
+
+        axios.post('http://localhost:3000/api/usuarios', formData)
+            .then(() => {
+                alert('Utilizador registado com sucesso!');
+                onSuccess();
+            })
+            .catch(err => {
+                console.error("Erro ao registar utilizador:", err);
+                const errorMessage = err.response?.data?.error || 'Ocorreu uma falha ao registar o utilizador.';
+                alert(errorMessage);
+            });
     };
 
     return (
         <form onSubmit={handleSubmit}>
             <h3>Registar Novo Utilizador</h3>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
             <div>
                 <input type="text" placeholder="Nome" value={formData.nome} onChange={e => setFormData({ ...formData, nome: e.target.value })} required />
                 <input type="email" placeholder="Email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />

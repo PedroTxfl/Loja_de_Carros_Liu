@@ -19,10 +19,7 @@ interface VeiculoEditFormProps {
 
 export function VeiculoEditForm({ veiculo, onSuccess, onCancel }: VeiculoEditFormProps) {
     const [formData, setFormData] = useState(veiculo);
-
     const [imagem, setImagem] = useState<File | null>(null);
-
-    const [error, setError] = useState<string | null>(null);
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -30,42 +27,42 @@ export function VeiculoEditForm({ veiculo, onSuccess, onCancel }: VeiculoEditFor
         }
     };
 
-    const handleSubmit = async (event: FormEvent) => {
+    const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
-        setError(null);
 
-        try {
-            await axios.put(`http://localhost:3000/api/veiculos/${veiculo.id}`, formData);
-
-            if (imagem) {
-                const imageFormData = new FormData();
-                imageFormData.append('imagem', imagem);
-                await axios.post(`http://localhost:3000/api/veiculos/${veiculo.id}/imagem`, imageFormData);
-            }
-
-            alert('Veículo atualizado com sucesso!');
-            onSuccess();
-        } catch (err: any) {
-            const errorMessage = err.response?.data?.error || 'Erro ao atualizar veículo.';
-            setError(errorMessage);
-        }
+        axios.put(`http://localhost:3000/api/veiculos/${veiculo.id}`, formData)
+            .then(() => {
+                if (imagem) {
+                    const imageFormData = new FormData();
+                    imageFormData.append('imagem', imagem);
+                    return axios.post(`http://localhost:3000/api/veiculos/${veiculo.id}/imagem`, imageFormData);
+                }
+            })
+            .then(() => {
+                alert('Veículo atualizado com sucesso!');
+                onSuccess();
+            })
+            .catch(err => {
+                console.error("Erro ao atualizar veículo:", err);
+                const errorMessage = err.response?.data?.error || 'Ocorreu uma falha ao atualizar o veículo.';
+                alert(errorMessage);
+            });
     };
 
     return (
         <form onSubmit={handleSubmit} style={{ background: '#f0f0f0', padding: '10px', borderRadius: '8px', marginTop: '10px' }}>
             <h4>Editando: {veiculo.marca} {veiculo.modelo}</h4>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <div>
                 <input type="text" placeholder="Marca" value={formData.marca} onChange={e => setFormData({ ...formData, marca: e.target.value })} required />
                 <input type="text" placeholder="Modelo" value={formData.modelo} onChange={e => setFormData({ ...formData, modelo: e.target.value })} required />
             </div>
             <div>
-                 <input type="number" placeholder="Ano de Fabricação" value={formData.anoFabricacao} onChange={e => setFormData({ ...formData, anoFabricacao: parseInt(e.target.value) })} required />
+                <input type="number" placeholder="Ano de Fabricação" value={formData.anoFabricacao} onChange={e => setFormData({ ...formData, anoFabricacao: parseInt(e.target.value) })} required />
                 <input type="number" placeholder="Ano do Modelo" value={formData.anoModelo} onChange={e => setFormData({ ...formData, anoModelo: parseInt(e.target.value) })} required />
             </div>
             <div>
-               <input type="text" placeholder="Cor" value={formData.cor} onChange={e => setFormData({ ...formData, cor: e.target.value })} required />
+                <input type="text" placeholder="Cor" value={formData.cor} onChange={e => setFormData({ ...formData, cor: e.target.value })} required />
                 <input type="text" placeholder="Placa" value={formData.placa || ''} onChange={e => setFormData({ ...formData, placa: e.target.value })} />
             </div>
             <div>

@@ -1,4 +1,3 @@
-// client/src/components/ClienteEditForm.tsx
 import { useState, type FormEvent } from 'react';
 import axios from 'axios';
 
@@ -18,26 +17,25 @@ interface ClienteEditFormProps {
 
 export function ClienteEditForm({ cliente, onSuccess, onCancel }: ClienteEditFormProps) {
     const [formData, setFormData] = useState(cliente);
-    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (event: FormEvent) => {
+    const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
-        setError(null);
-        try {
-            await axios.put(`http://localhost:3000/api/clientes/${cliente.id}`, formData);
-            alert('Cliente atualizado com sucesso!');
-            onSuccess();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
-            const errorMessage = err.response?.data?.error || 'Erro ao atualizar cliente.';
-            setError(errorMessage);
-        }
+
+        axios.put(`http://localhost:3000/api/clientes/${cliente.id}`, formData)
+            .then(() => {
+                alert('Cliente atualizado com sucesso!');
+                onSuccess();
+            })
+            .catch(err => {
+                console.error("Erro ao atualizar cliente:", err);
+                const errorMessage = err.response?.data?.error || 'Ocorreu uma falha ao atualizar o cliente.';
+                alert(errorMessage);
+            });
     };
 
     return (
         <form onSubmit={handleSubmit} style={{ background: '#f0f0f0', padding: '10px', borderRadius: '8px', marginTop: '10px' }}>
             <h4>Editando: {cliente.nome}</h4>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
             <div>
                 <input type="text" placeholder="Nome" value={formData.nome} onChange={e => setFormData({ ...formData, nome: e.target.value })} required />
                 <input type="email" placeholder="Email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />

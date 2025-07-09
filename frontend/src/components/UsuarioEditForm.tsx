@@ -1,3 +1,4 @@
+// client/src/components/UsuarioEditForm.tsx
 import { useState, type FormEvent } from 'react';
 import axios from 'axios';
 
@@ -16,24 +17,25 @@ interface UsuarioEditFormProps {
 
 export function UsuarioEditForm({ usuario, onSuccess, onCancel }: UsuarioEditFormProps) {
     const [formData, setFormData] = useState(usuario);
-    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (event: FormEvent) => {
+    const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
-        setError(null);
-        try {
-            await axios.put(`http://localhost:3000/api/usuarios/${usuario.id}`, formData);
-            alert('Utilizador atualizado com sucesso!');
-            onSuccess();
-        } catch (err: any) {
-            setError(err.response?.data?.error || 'Erro ao atualizar utilizador.');
-        }
+
+        axios.put(`http://localhost:3000/api/usuarios/${usuario.id}`, formData)
+            .then(() => {
+                alert('Utilizador atualizado com sucesso!');
+                onSuccess();
+            })
+            .catch(err => {
+                console.error("Erro ao atualizar utilizador:", err);
+                const errorMessage = err.response?.data?.error || 'Ocorreu uma falha ao atualizar o utilizador.';
+                alert(errorMessage);
+            });
     };
 
     return (
         <form onSubmit={handleSubmit} style={{ background: '#f0f0f0', padding: '10px', borderRadius: '8px', marginTop: '10px' }}>
             <h4>Editando: {usuario.nome}</h4>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
             <div>
                 <input type="text" placeholder="Nome" value={formData.nome} onChange={e => setFormData({ ...formData, nome: e.target.value })} required />
                 <input type="email" placeholder="Email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
