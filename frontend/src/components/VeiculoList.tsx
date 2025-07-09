@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { VeiculoEditForm } from './VeiculoEditForm';
+import { Table, Button } from 'react-bootstrap';
 
 interface Veiculo {
     id: number;
@@ -59,33 +60,39 @@ export function VeiculosList({ refreshKey, onSuccess }: VeiculosListProps) {
     return (
         <div>
             <h1>Lista de Veículos</h1>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-                {veiculos.map(veiculo => (
-                    <li key={veiculo.id} style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>
-                        {editingVeiculoId === veiculo.id ? (
-                            <VeiculoEditForm
-                                veiculo={veiculo}
-                                onSuccess={handleEditSuccess}
-                                onCancel={handleCancelEdit}
-                            />
-                        ) : (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span>
-                                    {veiculo.marca} {veiculo.modelo} ({veiculo.anoFabricacao}) - R$ {veiculo.preco}
-                                </span>
-                                <div>
-                                    <button onClick={() => setEditingVeiculoId(veiculo.id)} style={{ marginLeft: '10px' }}>
-                                        Editar
-                                    </button>
-                                    <button onClick={() => handleDelete(veiculo.id)} style={{ marginLeft: '10px' }}>
-                                        Deletar
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </li>
-                ))}
-            </ul>
+            <Table striped bordered hover responsive>
+                <thead>
+                    <tr>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Ano</th>
+                        <th>Preço</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {veiculos.map(veiculo => (
+                        <tr key={veiculo.id}>
+                            {editingVeiculoId === veiculo.id ? (
+                                <td colSpan={5}>
+                                    <VeiculoEditForm veiculo={veiculo} onSuccess={handleEditSuccess} onCancel={handleCancelEdit} />
+                                </td>
+                            ) : (
+                                <>
+                                    <td>{veiculo.marca}</td>
+                                    <td>{veiculo.modelo}</td>
+                                    <td>{veiculo.anoFabricacao}</td>
+                                    <td>R$ {veiculo.preco}</td>
+                                    <td>
+                                        <Button variant="warning" size="sm" onClick={() => setEditingVeiculoId(veiculo.id)}>Editar</Button>
+                                        <Button variant="danger" size="sm" className="ms-2" onClick={() => handleDelete(veiculo.id)}>Deletar</Button>
+                                    </td>
+                                </>
+                            )}
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
         </div>
     );
 }

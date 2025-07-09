@@ -1,5 +1,6 @@
 import { useState, type FormEvent, type ChangeEvent } from 'react';
 import axios from 'axios';
+import { Form, Button, Row, Col } from 'react-bootstrap';
 
 interface VeiculoFormProps {
     onSuccess: () => void;
@@ -50,29 +51,49 @@ export function VeiculoForm({ onSuccess }: VeiculoFormProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Registar Novo Veículo</h2>
-            
-            <div>
-                <input type="text" placeholder="Marca" value={formData.marca} onChange={e => setFormData({ ...formData, marca: e.target.value })} required />
-                <input type="text" placeholder="Modelo" value={formData.modelo} onChange={e => setFormData({ ...formData, modelo: e.target.value })} required />
-            </div>
-            <div>
-                <input type="number" placeholder="Ano de Fabricação" value={formData.anoFabricacao} onChange={e => setFormData({ ...formData, anoFabricacao: parseInt(e.target.value) })} required />
-                <input type="number" placeholder="Ano do Modelo" value={formData.anoModelo} onChange={e => setFormData({ ...formData, anoModelo: parseInt(e.target.value) })} required />
-            </div>
-            <div>
-                <input type="text" placeholder="Cor" value={formData.cor} onChange={e => setFormData({ ...formData, cor: e.target.value })} required />
-                <input type="text" placeholder="Placa" value={formData.placa} onChange={e => setFormData({ ...formData, placa: e.target.value })} />
-            </div>
-             <div>
-                <input type="number" step="0.01" placeholder="Preço" value={formData.preco} onChange={e => setFormData({ ...formData, preco: parseFloat(e.target.value) })} required />
-            </div>
-            <div>
-                <label>Imagem do Veículo:</label>
-                <input type="file" name="imagem" onChange={handleFileChange} />
-            </div>
-            <button type="submit">Registar</button>
-        </form>
+        <Form onSubmit={handleSubmit} className="mb-4 p-4 border rounded">
+            <h3>Registar Novo Veículo</h3>
+            <Row className="mb-3">
+                <Form.Group as={Col}>
+                    <Form.Label>Marca</Form.Label>
+                    <Form.Control type="text" placeholder="Marca" value={formData.marca} onChange={e => setFormData({ ...formData, marca: e.target.value })} required />
+                </Form.Group>
+                <Form.Group as={Col}>
+                    <Form.Label>Modelo</Form.Label>
+                    <Form.Control type="text" placeholder="Modelo" value={formData.modelo} onChange={e => setFormData({ ...formData, modelo: e.target.value })} required />
+                </Form.Group>
+            </Row>
+            <Row className="mb-3">
+                <Form.Group as={Col}>
+                    <Form.Label>Ano de Fabricação</Form.Label>
+                    <Form.Control type="number" placeholder="Ano de Fabricação" value={formData.anoFabricacao} onChange={e => setFormData({ ...formData, anoFabricacao: parseInt(e.target.value) })} required />
+                </Form.Group>
+                 <Form.Group as={Col}>
+                    <Form.Label>Ano do Modelo</Form.Label>
+                    <Form.Control type="number" placeholder="Ano do Modelo" value={formData.anoModelo} onChange={e => setFormData({ ...formData, anoModelo: parseInt(e.target.value) })} required />
+                </Form.Group>
+            </Row>
+             <Row className="mb-3">
+                <Form.Group as={Col}>
+                    <Form.Label>Cor</Form.Label>
+                    <Form.Control type="text" placeholder="Cor" value={formData.cor} onChange={e => setFormData({ ...formData, cor: e.target.value })} required />
+                </Form.Group>
+                <Form.Group as={Col}>
+                    <Form.Label>Placa</Form.Label>
+                    <Form.Control type="text" placeholder="Placa" value={formData.placa} onChange={e => setFormData({ ...formData, placa: e.target.value })} />
+                </Form.Group>
+            </Row>
+            <Row className="mb-3">
+                <Form.Group as={Col}>
+                    <Form.Label>Preço (R$)</Form.Label>
+                    <Form.Control type="number" step="0.01" placeholder="Preço" value={formData.preco} onChange={e => setFormData({ ...formData, preco: parseFloat(e.target.value) })} required />
+                </Form.Group>
+                <Form.Group as={Col}>
+                    <Form.Label>Imagem do Veículo</Form.Label>
+                    <Form.Control type="file" name="imagem" onChange={handleFileChange} />
+                </Form.Group>
+            </Row>
+            <Button variant="primary" type="submit">Registar</Button>
+        </Form>
     );
 }

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { UsuarioEditForm } from './UsuarioEditForm';
+import { Table, Button } from 'react-bootstrap'; 
+
 
 interface Usuario {
     id: number;
@@ -44,29 +46,37 @@ export function UsuariosList({ refreshKey, onSuccess }: UsuariosListProps) {
     return (
         <div>
             <h2>Lista de Utilizadores</h2>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-                {usuarios.map(user => (
-                    <li key={user.id} style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>
-                        {editingUserId === user.id ? (
-                            <UsuarioEditForm
-                                usuario={user}
-                                onSuccess={handleEditSuccess}
-                                onCancel={() => setEditingUserId(null)}
-                            />
-                        ) : (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span>
-                                    <strong>{user.nome}</strong> ({user.email}) - Cargo: {user.cargo || 'N/A'}
-                                </span>
-                                <div>
-                                    <button onClick={() => setEditingUserId(user.id)}>Editar</button>
-                                    <button onClick={() => handleDelete(user.id)} style={{ marginLeft: '10px' }}>Deletar</button>
-                                </div>
-                            </div>
-                        )}
-                    </li>
-                ))}
-            </ul>
+            <Table striped bordered hover responsive>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Cargo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {usuarios.map(user => (
+                        <tr key={user.id}>
+                            {editingUserId === user.id ? (
+                                <td colSpan={4}>
+                                    <UsuarioEditForm usuario={user} onSuccess={handleEditSuccess} onCancel={() => setEditingUserId(null)} />
+                                </td>
+                            ) : (
+                                <>
+                                    <td>{user.nome}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.cargo || 'N/A'}</td>
+                                    <td>
+                                        <Button variant="warning" size="sm" onClick={() => setEditingUserId(user.id)}>Editar</Button>
+                                        <Button variant="danger" size="sm" className="ms-2" onClick={() => handleDelete(user.id)}>Deletar</Button>
+                                    </td>
+                                </>
+                            )}
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
         </div>
     );
 }

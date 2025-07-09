@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Table } from 'react-bootstrap';
+
 
 interface Venda {
     id: string;
@@ -36,15 +38,28 @@ export function VendasList({ refreshKey }: VendasListProps) {
     return (
         <div>
             <h2>Histórico de Vendas</h2>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-                {vendas.map(venda => (
-                    <li key={venda.id} style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>
-                        <strong>Veículo:</strong> {venda.veiculo.marca} {venda.veiculo.modelo} <br />
-                        <strong>Cliente:</strong> {venda.cliente.nome} | <strong>Vendedor:</strong> {venda.vendedor.nome} <br />
-                        <strong>Valor:</strong> R$ {venda.valorVenda} | <strong>Data:</strong> {new Date(venda.dataHora).toLocaleDateString()}
-                    </li>
-                ))}
-            </ul>
+            <Table striped bordered hover responsive>
+                <thead>
+                    <tr>
+                        <th>Veículo</th>
+                        <th>Cliente</th>
+                        <th>Vendedor</th>
+                        <th>Data</th>
+                        <th>Valor da Venda</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {vendas.map(venda => (
+                        <tr key={venda.id}>
+                            <td>{venda.veiculo.marca} {venda.veiculo.modelo}</td>
+                            <td>{venda.cliente.nome}</td>
+                            <td>{venda.vendedor.nome}</td>
+                            <td>{new Date(venda.dataHora).toLocaleDateString()}</td>
+                            <td>R$ {Number(venda.valorVenda).toFixed(2)}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
         </div>
     );
 }

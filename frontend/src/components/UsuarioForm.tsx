@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import axios from 'axios';
+import { Form, Button, Row, Col } from 'react-bootstrap';
+
 
 interface UsuarioFormProps {
     onSuccess: () => void;
@@ -24,17 +26,33 @@ export function UsuarioForm({ onSuccess }: UsuarioFormProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} className="mb-4 p-4 border rounded">
             <h3>Registar Novo Utilizador</h3>
-            <div>
-                <input type="text" placeholder="Nome" value={formData.nome} onChange={e => setFormData({ ...formData, nome: e.target.value })} required />
-                <input type="email" placeholder="Email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
-            </div>
-            <div>
-                <input type="password" placeholder="Senha" value={formData.senha} onChange={e => setFormData({ ...formData, senha: e.target.value })} required />
-                <input type="text" placeholder="Cargo" value={formData.cargo} onChange={e => setFormData({ ...formData, cargo: e.target.value })} />
-            </div>
-            <button type="submit">Registar Utilizador</button>
-        </form>
+            <Row className="mb-3">
+                <Form.Group as={Col} controlId="formGridUserName">
+                    <Form.Label>Nome</Form.Label>
+                    <Form.Control type="text" placeholder="Nome do utilizador" value={formData.nome} onChange={e => setFormData({ ...formData, nome: e.target.value })} required />
+                </Form.Group>
+
+                <Form.Group as={Col} controlId="formGridUserEmail">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control type="email" placeholder="Email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
+                </Form.Group>
+            </Row>
+            <Row className="mb-3">
+                <Form.Group as={Col} controlId="formGridUserPassword">
+                    <Form.Label>Senha</Form.Label>
+                    <Form.Control type="password" placeholder="Senha" value={formData.senha} onChange={e => setFormData({ ...formData, senha: e.target.value })} required />
+                </Form.Group>
+
+                <Form.Group as={Col} controlId="formGridUserRole">
+                    <Form.Label>Cargo</Form.Label>
+                    <Form.Control type="text" placeholder="Ex: Vendedor, Gerente" value={formData.cargo} onChange={e => setFormData({ ...formData, cargo: e.target.value })} />
+                </Form.Group>
+            </Row>
+            <Button variant="primary" type="submit">
+                Registar Utilizador
+            </Button>
+        </Form>
     );
 }

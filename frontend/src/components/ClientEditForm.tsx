@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import axios from 'axios';
+import { Form, Button, Row, Col } from 'react-bootstrap'; 
 
 interface Cliente {
     id: number;
@@ -34,20 +35,30 @@ export function ClienteEditForm({ cliente, onSuccess, onCancel }: ClienteEditFor
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{ background: '#f0f0f0', padding: '10px', borderRadius: '8px', marginTop: '10px' }}>
-            <h4>Editando: {cliente.nome}</h4>
-            <div>
-                <input type="text" placeholder="Nome" value={formData.nome} onChange={e => setFormData({ ...formData, nome: e.target.value })} required />
-                <input type="email" placeholder="Email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
-            </div>
-            <div>
-                <input type="text" placeholder="CPF" value={formData.cpf} onChange={e => setFormData({ ...formData, cpf: e.target.value })} required />
-                <input type="text" placeholder="Telefone" value={formData.telefone || ''} onChange={e => setFormData({ ...formData, telefone: e.target.value })} />
-            </div>
-            <button type="submit">Salvar</button>
-            <button type="button" onClick={onCancel} style={{ marginLeft: '10px' }}>
-                Cancelar
-            </button>
-        </form>
+        <Form onSubmit={handleSubmit} className="p-3 bg-light border rounded">
+            <h5 className="mb-3">Editando: {cliente.nome}</h5>
+             <Row className="mb-3">
+                <Form.Group as={Col}>
+                    <Form.Label>Nome</Form.Label>
+                    <Form.Control type="text" value={formData.nome} onChange={e => setFormData({ ...formData, nome: e.target.value })} required />
+                </Form.Group>
+                <Form.Group as={Col}>
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
+                </Form.Group>
+            </Row>
+            <Row className="mb-3">
+                <Form.Group as={Col}>
+                    <Form.Label>CPF</Form.Label>
+                    <Form.Control type="text" value={formData.cpf} onChange={e => setFormData({ ...formData, cpf: e.target.value })} required />
+                </Form.Group>
+                <Form.Group as={Col}>
+                    <Form.Label>Telefone</Form.Label>
+                    <Form.Control type="text" value={formData.telefone || ''} onChange={e => setFormData({ ...formData, telefone: e.target.value })} />
+                </Form.Group>
+            </Row>
+            <Button variant="success" type="submit" size="sm">Salvar</Button>
+            <Button variant="secondary" onClick={onCancel} size="sm" className="ms-2">Cancelar</Button>
+        </Form>
     );
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ClienteEditForm } from './ClientEditForm';
+import { Table, Button } from 'react-bootstrap'; 
 
 interface Cliente {
     id: number;
@@ -52,25 +53,37 @@ export function ClientesList({ refreshKey, onSuccess }: ClientesListProps) {
     return (
         <div>
             <h2>Lista de Clientes</h2>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-                {clientes.map(cliente => (
-                    <li key={cliente.id} style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>
-                        {editingClienteId === cliente.id ? (
-                            <ClienteEditForm cliente={cliente} onSuccess={handleEditSuccess} onCancel={() => setEditingClienteId(null)} />
-                        ) : (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span>
-                                    <strong>{cliente.nome}</strong> ({cliente.email})
-                                </span>
-                                <div>
-                                    <button onClick={() => setEditingClienteId(cliente.id)}>Editar</button>
-                                    <button onClick={() => handleDelete(cliente.id)} style={{ marginLeft: '10px' }}>Deletar</button>
-                                </div>
-                            </div>
-                        )}
-                    </li>
-                ))}
-            </ul>
+            <Table striped bordered hover responsive>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>CPF</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {clientes.map(cliente => (
+                        <tr key={cliente.id}>
+                            {editingClienteId === cliente.id ? (
+                                <td colSpan={4}>
+                                    <ClienteEditForm cliente={cliente} onSuccess={handleEditSuccess} onCancel={() => setEditingClienteId(null)} />
+                                </td>
+                            ) : (
+                                <>
+                                    <td>{cliente.nome}</td>
+                                    <td>{cliente.email}</td>
+                                    <td>{cliente.cpf}</td>
+                                    <td>
+                                        <Button variant="warning" size="sm" onClick={() => setEditingClienteId(cliente.id)}>Editar</Button>
+                                        <Button variant="danger" size="sm" className="ms-2" onClick={() => handleDelete(cliente.id)}>Deletar</Button>
+                                    </td>
+                                </>
+                            )}
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
         </div>
     );
 }
