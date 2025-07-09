@@ -40,6 +40,7 @@ export class VeiculoService {
         throw { id: 400, msg: "Campos obrigatórios (marca, modelo, anoFabricacao, anoModelo, cor, preco) não foram fornecidos ou são inválidos." };
     }
     
+    
     if (typeof data.marca !== 'string' ||
         typeof data.modelo !== 'string' ||
         typeof data.anoFabricacao !== 'number' ||
@@ -50,6 +51,10 @@ export class VeiculoService {
     }
     if (data.preco < 0) {
         throw { id: 400, msg: "Preço não pode ser negativo." };
+    }
+
+    if (data.placa === '') {
+        (data as any).placa = null;
     }
 
     if (data.placa) {
